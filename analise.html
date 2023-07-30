@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEXUS PMERJ - Análise de Patentes</title>
+</head>
+
+<body>
+    <h1>Análise de Patentes</h1>
+    <p>Cole o conteúdo do arquivo CSV abaixo:</p>
+    <textarea id="csvData" rows="10" cols="50"></textarea>
+    <button onclick="processar()">Processar</button>
+
+    <h2>Resultados:</h2>
+    <table id="tabelaResultado">
+        <thead>
+            <tr>
+                <th>N°</th>
+                <th>ID</th>
+                <th>Nome</th>
+                <th>Patente</th>
+                <th>Última Promoção</th>
+                <th>Unidade</th>
+                <th>Qtd. Relatórios</th>
+                <th>Cursos</th>
+                <th>Aus. Jus</th>
+                <th>ADVs</th>
+                <th>Data da Admissão</th>
+                <th>Promovido</th>
+            </tr>
+        </thead>
+        <tbody id="corpoTabelaResultado">
+        </tbody>
+    </table>
+
+    <script>
+        function processar() {
+            const csvData = document.getElementById('csvData').value;
+            const linhas = csvData.split('\n').map(linha => linha.trim());
+
+            const dados = [];
+            for (let i = 1; i < linhas.length; i++) {
+                const [num, id, nome, patente, ultimaPromo, unidade, qtdRelatorios, cursos, ausJus, advs, dataAdmissao] = linhas[i].split(',');
+                dados.push({
+                    num: num,
+                    id: id,
+                    nome: nome,
+                    patente: patente,
+                    ultimaPromo: ultimaPromo,
+                    unidade: unidade,
+                    qtdRelatorios: parseInt(qtdRelatorios),
+                    cursos: cursos,
+                    ausJus: ausJus,
+                    advs: advs,
+                    dataAdmissao: dataAdmissao
+                });
+            }
+
+            const resultados = [];
+            const hoje = new Date();
+
+            dados.forEach(dado => {
+                const ultimaPromoDate = new Date(dado.ultimaPromo);
+                const diffEmDias = (hoje - ultimaPromoDate) / (1000 * 60 * 60 * 24);
+
+                let promovido = 'Não';
+
+                // Função auxiliar para verificar se o funcionário cumpriu a carga horária semanal de 10h
+                function cumpriuCargaHorariaSemanal(dataUltimasSemanas) {
+                    const diasMinimos = 5 * 7; // 5 semanas
+                    const semanas = dataUltimasSemanas.slice(-diasMinimos);
+                    const cargaHorariaMinima = 10 * 7; // 10h por semana durante 5 semanas
+                    const cargaHorariaSemanal = semanas.reduce((acc, dia) => acc + (dia.qtdRelatorios || 0), 0);
+                    return cargaHorariaSemanal >= cargaHorariaMinima;
+                }
+
+                switch (dado.patente) {
+                    case 'Recruta':
+                        if (diffEmDias >= 5 && dado.qtdRelatorios >= 5 && cumpriuCargaHorariaSemanal(dados)) {
+                            promovido = 'Sim';
+                        }
+                        break;
+                    case 'SD 2ª Classe':
+                        if (diffEmDias >= 20 && dado.qtdRelatorios >= 10  && cumpriuCargaHorariaSemanal(dados.slice(-14))) {
+                            promovido = 'Sim';
+                        }
+                        break;
+                    case 'SD 1ª Classe':
+                        if (diffEmDias >= 30 && dado.qtdRelatorios >= 10  && dado.advs === 'Sim' && cumpriuCargaHorariaSemanal(dados.slice(-14))) {
+                            promovido = 'Sim';
+                        }
+                        break;
+                    case 'Cabo':
+                        if (diffEmDias >= 35 && dado.qtdRelatorios >= 15 && dado.advs === 'Sim' && dado.ausJus === 'Sim' && cumpriuCargaHorariaSemanal(dados.slice(-14))) {
+                            promovido = 'Sim';
+                        }
+                        break;
+                    case '3° Sargento':
+                        if (diffEmDias >= 35 && dado.qtdRelatorios >= 20 && dado.advs === 'Sim' && dado.ausJus === 'Sim' && cumpriuCargaHorariaSemanal(dados.slice(-14))) {
+                            promovido = 'Sim';
+                        }
+                        break;
+                    case '2° Sargento':
+                        if (diffEmDias >= 40 && dado.qtdRelatorios >= 20 && dado.advs === 'Sim' && dado.ausJus === 'Sim' && cumpriuCargaHorariaSemanal(dados.slice(-14))) {
+                            promovido = 'Sim';
+                        }
+                        break;
+                    case '1° Sargento':
+                        if (diffEmDias >= 45 && dado.qtdRelatorios >= 20 && dado.advs === 'Sim' && dado.ausJus === 'Sim' && cumpriuCargaHorariaSemanal(dados.slice(-35))) {
+                            promovido = 'Sim';
+                        }
+                        break;
+                    case 'Sub-Tenente':
+                        if (diffEmDias >= 50 && dado.qtdRelatorios >= 25 && dado.advs === 'Sim' && dado.ausJus === 'Sim' && cumpriuCargaHorariaSemanal(dados.slice(-35))) {
+                            promovido = 'Sim';
+                        }
+                        break;
+                    case 'Aspirante':
+                        if (diffEmDias >= 50 && dado.qtdRelatorios >= 25 && dado.advs === 'Sim' && dado.ausJus === 'Sim' && cumpriuCargaHorariaSemanal(dados.slice(-35))) {
+                            promovido = 'Sim';
+                        }
+                        break;
+                    case '2° Tenente':
+                        if (diffEmDias >= 50 && dado.qtdRelatorios >= 25 && dado.advs === 'Sim' && dado.ausJus === 'Sim' && cumpriuCargaHorariaSemanal(dados.slice(-35))) {
+                            promovido = 'Sim';
+                        }
+                        break;
+                    case '1° Tenente':
+                        if (diffEmDias >= 50 && dado.qtdRelatorios >= 25 && dado.advs === 'Sim' && dado.ausJus === 'Sim' && cumpriuCargaHorariaSemanal(dados.slice(-35))) {
+                            promovido = 'Sim';
+                        }
+                        break;
+                    case 'Capitão':
+                        if (diffEmDias >= 50 && dado.qtdRelatorios >= 25 && dado.advs === 'Sim' && cumpriuCargaHorariaSemanal(dados.slice(-35))) {
+                            promovido = 'Sim';
+                        }
+                        break;
+                    case 'Major':
+                        if (diffEmDias >= 50 && dado.qtdRelatorios >= 25 && cumpriuCargaHorariaSemanal(dados.slice(-35))) {
+                            promovido = 'Sim';
+                        }
+                        break;
+                }
+
+                resultados.push({
+                    num: dado.num,
+                    id: dado.id,
+                    nome: dado.nome,
+                    patente: dado.patente,
+                    ultimaPromo: dado.ultimaPromo,
+                    unidade: dado.unidade,
+                    qtdRelatorios: dado.qtdRelatorios,
+                    cursos: dado.cursos,
+                    ausJus: dado.ausJus,
+                    advs: dado.advs,
+                    dataAdmissao: dado.dataAdmissao,
+                    promovido: promovido
+                });
+            });
+
+            const corpoTabelaResultado = document.getElementById('corpoTabelaResultado');
+            corpoTabelaResultado.innerHTML = ''; // Limpa os dados anteriores da tabela
+
+            resultados.forEach(resultado => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${resultado.num}</td>
+                    <td>${resultado.id}</td>
+                    <td>${resultado.nome}</td>
+                    <td>${resultado.patente}</td>
+                    <td>${resultado.ultimaPromo}</td>
+                    <td>${resultado.unidade}</td>
+                    <td>${resultado.qtdRelatorios}</td>
+                    <td>${resultado.cursos}</td>
+                    <td>${resultado.ausJus}</td>
+                    <td>${resultado.advs}</td>
+                    <td>${resultado.dataAdmissao}</td>
+                    <td>${resultado.promovido}</td>
+                `;
+                corpoTabelaResultado.appendChild(row);
+            });
+        }
+    </script>
+</body>
+
+</html>

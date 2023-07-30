@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Bloco de Notas</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+    }
+
+    #note-container {
+      width: 400px;
+      margin: 0 auto;
+    }
+
+    textarea {
+      width: 100%;
+      height: 200px;
+      resize: none;
+    }
+  </style>
+</head>
+<body>
+  <div id="note-container">
+    <h1>Bloco de Notas</h1>
+    <textarea id="note" placeholder="Digite suas anotações aqui"></textarea>
+    <button onclick="saveNote()">Salvar</button>
+    <button onclick="clearNote()">Limpar</button>
+  </div>
+
+  <script>
+    // Função para carregar a nota do localStorage, se existir
+    window.onload = function () {
+      const noteTextarea = document.getElementById('note');
+      const savedNote = localStorage.getItem('userNote');
+      if (savedNote) {
+        noteTextarea.value = savedNote;
+      }
+    };
+
+    // Função para salvar a nota no localStorage
+    function saveNote() {
+      const noteTextarea = document.getElementById('note');
+      const noteContent = noteTextarea.value;
+      localStorage.setItem('userNote', noteContent);
+      alert('Nota salva com sucesso!');
+    }
+
+    // Função para limpar a nota do localStorage e do textarea
+    function clearNote() {
+      const noteTextarea = document.getElementById('note');
+      noteTextarea.value = '';
+      localStorage.removeItem('userNote');
+      alert('Nota limpa!');
+    }
+  </script>
+</body>
+</html>
