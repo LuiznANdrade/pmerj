@@ -1,107 +1,98 @@
-
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-<title>DEMONSTRAÇÃO - Criptografia com JavaScript</title>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cupom de Rifa Destacável</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .cupom{
+            width: 452px;
+            height: 191.723px;
+            background-image: url("https://cdn.discordapp.com/attachments/1127720158555807854/1135400584145547264/rifa.png");
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
+
+        .numberprincipal{
+            position: relative;
+            top: -95px;
+            left: -115px   ;
+            transform: rotate(-90deg);
+            color: #323232;
+            font-family: Inter;
+            font-size: 30.796px;
+            font-style: normal;
+            font-weight: 700;
+            line-height: 92.523%; /* 28.493px */
+        }
+
+        .numbersecundario{
+            width: 452px;
+            height: 191.723px;
+            position: relative;
+            bottom: -131px !important;
+            right: -361px !important;
+            color: #323232;
+            font-family: Inter;
+            
+            font-size: 20.531px;
+            font-style: normal;
+            font-weight: 700;
+            line-height: 92.523%; /* 18.996px */
+        }
+        #couponContainer{
+            width: 100%;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            
+        }
+    </style>
 </head>
 <body>
-<script src="https://s.codigofonte.com.br/wp-content/js/codigofonte-bar.js"></script>
-<script language="javascript">
-function Encripta(dados){
-	var mensx="";
-	var l;
-	var i;
-	var j=0;
-	var ch;
-	ch = "assbdFbdpdPdpfPdAAdpeoseslsQQEcDDldiVVkadiedkdkLLnm";
-	for (i=0;i<dados.length; i++){
-		j++;
-		l=(Asc(dados.substr(i,1))+(Asc(ch.substr(j,1))));
-		if (j==50){
-			j=1;
-		}
-		if (l>255){
-			l-=256;
-		}
-		mensx+=(Chr(l));
-	}
-	document.getElementById("1").value=mensx;
-}
-function Descripta(dados){
-	var mensx="";
-	var l;
-	var i;
-	var j=0;
-	var ch;
-	ch = "assbdFbdpdPdpfPdAAdpeoseslsQQEcDDldiVVkadiedkdkLLnm";
-	for (i=0; i<dados.length;i++){
-		j++;
-		l=(Asc(dados.substr(i,1))-(Asc(ch.substr(j,1))));
-		if (j==50){
-			j=1;
-		}
-		if (l<0){
-			l+=256;
-		}
-		mensx+=(Chr(l));
-	}
-	document.getElementById("2").value=mensx;
-}
-function Asc(String){
-	return String.charCodeAt(0);
+    <h1>Lista de Cupons de Rifa</h1>
+    <div id="couponContainer">
+        <div class="cupom">
+            <div class="numberprincipal ">N° 001</div>
+            <div class="numbersecundario">N° 001</div>
+        </div>
+    </div>
+</body>
+<script>
+    // Função para criar os cupons
+function criarCupons() {
+  const container = document.getElementById("couponContainer");
+  
+  for (let i = 1; i <= 500; i++) {
+    const cupom = document.createElement("div");
+    cupom.classList.add("cupom");
+    
+    const numberPrincipal = document.createElement("div");
+    numberPrincipal.classList.add("numberprincipal");
+    numberPrincipal.innerText = `N° ${padNum(i)}`;
+    cupom.appendChild(numberPrincipal);
+    
+    const numberSecundario = document.createElement("div");
+    numberSecundario.classList.add("numbersecundario");
+    numberSecundario.innerText = `N° ${padNum(i)}`;
+    cupom.appendChild(numberSecundario);
+    
+    container.appendChild(cupom);
+  }
 }
 
-function Chr(AsciiNum){
-	return String.fromCharCode(AsciiNum)
+// Função auxiliar para adicionar zeros à esquerda para completar 3 dígitos
+function padNum(num) {
+  return num.toString().padStart(3, "0");
 }
+
+// Chama a função para criar os cupons quando a página estiver carregada
+document.addEventListener("DOMContentLoaded", criarCupons);
+
 </script>
-<table width="100%" border="0" cellspacing="0" cellpadding="0">
-  <tr>
-    <td align="center">Dado a ser criptografado </td>
-    <td align="center">Criptografia</td>
-    <td align="center">Descriptografia</td>
-  </tr>
-  <tr>
-    <td align="center"><textarea name="1" id="0" rows="5" onKeyPress="return enter(event, this);"></textarea></td>
-    <td align="center"><textarea name="2" id="1" rows="5" onKeyPress="return enter(event, this);"></textarea></td>
-    <td align="center"><textarea name="3" id="2" rows="5" onKeyPress="return enter(event, this);"></textarea></td>
-  </tr>
-</table>
-<div align="center"><br />
-  <br />
-  <input type="button" value="Limpar Campos" onClick="limpar();"/>
-    <script language="javascript">
-document.getElementById("0").focus();
-function enter(event, envia){
-	var keyCode = event.keyCode ? event.keyCode : event.which ? event.which : event.charCode;
-	if (keyCode == 13){
-		var dados=document.getElementById(envia.id);
-		var next=(parseInt(envia.id)+1);
-		if(dados.value.lenght<=0){
-			return false;
-		}else{
-			if (envia.id==0){
-				Encripta(dados.value);
-				document.getElementById(next).focus();
-			}else if(envia.id==1){
-				Descripta(dados.value);
-				document.getElementById(next).focus();
-			}else{
-				limpar();
-			}
-			return false;
-		}
-	}else{
-		return true;
-	}
-}
-function limpar(){
-	for (var i=0; i<3;i++){
-		document.getElementById(i).value="";
-	}
-	document.getElementById(0).focus();
-}
-  </script>
-</div>
-</body>
 </html>
